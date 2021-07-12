@@ -50,6 +50,10 @@ class Webim {
     return await _channel.invokeMethod('pauseSession');
   }
 
+  static FutureOr<void> disposeSession() async {
+    return await _channel.invokeMethod('disposeSession');
+  }
+
   static Future<String> sendMessage({
     @required String message,
   }) async {

@@ -38,6 +38,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
             "buildSession" -> buildSession(call, result)
             "pauseSession" -> pauseSession()
             "resumeSession" -> resumeSession()
+            "disposeSession" -> resumeSession()
             "sendMessage" -> sendMessage(call, result)
             "getLastMessages" -> getLastMessages(call, result)
             else -> result.notImplemented()
@@ -76,13 +77,16 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun pauseSession() {
-
         session?.pause()
     }
 
     private fun resumeSession() {
         session?.resume()
         session.stream.newMessageTracker(messageDelegate)
+    }
+
+    private fun disposeSession() {
+        session?.destroy()
     }
 
     private fun sendMessage(@NonNull call: MethodCall, @NonNull result: Result) {

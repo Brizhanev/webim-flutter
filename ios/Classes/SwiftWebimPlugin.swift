@@ -29,6 +29,8 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
             pauseSession (result: result)
         case "resumeSession":
             resumeSession (result: result)
+        case "disposeSession":
+            destroySession (result: result)
         case "sendMessage":
             sendMessage (call, result: result)
         case "getLastMessages":
@@ -44,6 +46,12 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
     }
     
     private func resumeSession(result: @escaping FlutterResult){
+        if(SwiftWebimPlugin.session == null) {
+            result(FlutterError(
+                    code: FlutterPluginEnum.failure,
+                    message: "Session not exist",
+                    details: nil))
+        }
         do{
             try SwiftWebimPlugin.session?.resume()
             try SwiftWebimPlugin.session?.getStream().newMessageTracker(messageListener: SwiftWebimPlugin.messageStreamHandler)
@@ -58,8 +66,28 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
     }
     
     private func pauseSession(result: @escaping FlutterResult){
+        if(SwiftWebimPlugin.session == null) {
+            result(FlutterError(
+                    code: FlutterPluginEnum.failure,
+                    message: "Session not exist",
+                    details: nil))
+        }
         do{
             try SwiftWebimPlugin.session?.pause()
+        }catch{
+            result(FlutterError(
+                    code: FlutterPluginEnum.failure,
+                    message: "Pause session failed",
+                    details: nil))
+            
+        }
+        result(nil)
+    }
+    
+    private func destroySession(result: @escaping FlutterResult){
+        do{
+            try SwiftWebimPlugin.session?.destroy()
+            
         }catch{
             result(FlutterError(
                     code: FlutterPluginEnum.failure,
