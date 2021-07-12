@@ -1,0 +1,43 @@
+PODS:
+  - Flutter (1.0.0)
+  - SQLite.swift (0.12.2):
+    - SQLite.swift/standard (= 0.12.2)
+  - SQLite.swift/standard (0.12.2)
+  - webim (0.0.1):
+    - Flutter
+    - WebimClientLibrary
+  - WebimClientLibrary (3.35.0):
+    - SQLite.swift (= 0.12.2)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - webim (from `.symlinks/plugins/webim/ios`)
+  - WebimClientLibrary (from `https://github.com/webim/webim-client-sdk-ios.git`, tag `3.35.0`)
+
+SPEC REPOS:
+  trunk:
+    - SQLite.swift
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  webim:
+    :path: ".symlinks/plugins/webim/ios"
+  WebimClientLibrary:
+    :git: https://github.com/webim/webim-client-sdk-ios.git
+    :tag: 3.35.0
+
+CHECKOUT OPTIONS:
+  WebimClientLibrary:
+    :git: https://github.com/webim/webim-client-sdk-ios.git
+    :tag: 3.35.0
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
+  webim: de7c30ecb862990d4269fabd0af942ce1023476f
+  WebimClientLibrary: 8ba6e754c52846c3194531cf8c889116e944ced2
+
+PODFILE CHECKSUM: 3e66266ba75615ad1ac8426436cd7389b2de6d65
+
+COCOAPODS: 1.10.1
