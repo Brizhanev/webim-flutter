@@ -76,6 +76,18 @@ class Message {
     this.canBeReplied,
     this.isEdited,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Message) {
+      return other.clientSideId == clientSideId;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 /// Type of [Message]

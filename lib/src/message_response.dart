@@ -5,7 +5,7 @@ import 'package:webim/src/message.dart';
 /// [Message] response parser
 
 class MessageResponse {
-  Map<String, dynamic> json;
+  Map<dynamic, dynamic> json;
   MessageResponse.fromJson(dynamic row) {
     json = (row is String) ? jsonDecode(row) : row;
   }
