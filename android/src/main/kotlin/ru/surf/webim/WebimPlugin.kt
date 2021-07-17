@@ -8,10 +8,14 @@ import com.webimapp.android.sdk.*
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+
+const val methodChannelName = "webim"
+const val eventMessageStreamName = "webim.stream"
 
 /** WebimPlugin */
 class WebimPlugin : FlutterPlugin, MethodCallHandler {
@@ -23,11 +27,11 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     private val messageDelegate = MessageTrackerDelegate()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "webim")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, methodChannelName)
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
 
-        EventChannel(flutterPluginBinding.binaryMessenger, "webim.stream").setStreamHandler(
+        EventChannel(flutterPluginBinding.binaryMessenger, eventMessageStreamName).setStreamHandler(
             messageDelegate
         )
     }
@@ -72,8 +76,6 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         session = webimSession
 
         resumeSession()
-
-
     }
 
     private fun pauseSession() {

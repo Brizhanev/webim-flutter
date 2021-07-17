@@ -46,7 +46,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
     }
     
     private func resumeSession(result: @escaping FlutterResult){
-        if(SwiftWebimPlugin.session == null) {
+        if(SwiftWebimPlugin.session == nil) {
             result(FlutterError(
                     code: FlutterPluginEnum.failure,
                     message: "Session not exist",
@@ -66,7 +66,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
     }
     
     private func pauseSession(result: @escaping FlutterResult){
-        if(SwiftWebimPlugin.session == null) {
+        if(SwiftWebimPlugin.session == nil) {
             result(FlutterError(
                     code: FlutterPluginEnum.failure,
                     message: "Session not exist",
