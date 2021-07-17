@@ -7,6 +7,8 @@ import 'package:webim/src/message.dart';
 import 'package:webim/src/message_event_response.dart';
 import 'package:webim/src/message_response.dart';
 
+export 'package:webim/src/message.dart';
+
 const _methodChannelName = 'webim';
 const _methodEventStreamName = 'webim.stream';
 
