@@ -244,7 +244,7 @@ extension Message{
             "operatorId": getOperatorID() ?? "",
             "senderAvatarUrl":getSenderAvatarFullURL()?.absoluteString ?? "",
             "senderName":getSenderName(),
-            "senderStatus":(getSendStatus() == MessageSendStatus.sent) ? "SENT" : "SENDING",
+            "sendStatus":(getSendStatus() == MessageSendStatus.sent) ? "SENT" : "SENDING",
             "timeMicros": Int64(timeMicroseconds),
             "isReadOperator":isReadByOperator(),
             "canBeEdited": canBeEdited(),
