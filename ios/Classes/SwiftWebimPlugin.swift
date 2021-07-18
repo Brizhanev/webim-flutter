@@ -54,7 +54,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         }
         do{
             try SwiftWebimPlugin.session?.resume()
-            try SwiftWebimPlugin.session?.getStream().newMessageTracker(messageListener: SwiftWebimPlugin.messageStreamHandler)
+            _ = try SwiftWebimPlugin.session?.getStream().newMessageTracker(messageListener: SwiftWebimPlugin.messageStreamHandler)
         }catch{
             result(FlutterError(
                     code: FlutterPluginEnum.failure,
@@ -143,11 +143,12 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         Webim.newSessionBuilder()
             .set(accountName: accountName)
             .set(location: locationName)
-            //            .set(visitorFieldsJSONString: visitorFields ?? "")
+            .set(visitorFieldsJSONString: visitorFields ?? "")
             .set(webimLogger: self, verbosityLevel: .verbose)
             .build(
                 onSuccess: { webimSession in
                     SwiftWebimPlugin.session = webimSession
+                    self.resumeSession(result: result)
                 }, onError: {
                     error in
                     switch error{
