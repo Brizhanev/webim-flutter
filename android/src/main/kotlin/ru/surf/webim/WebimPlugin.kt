@@ -79,7 +79,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         session = webimSession
 
         resumeSession()
-        result.success(session)
+        result.success(session?.toString())
     }
 
     private fun pauseSession() {
