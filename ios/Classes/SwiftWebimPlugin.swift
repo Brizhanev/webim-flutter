@@ -213,11 +213,11 @@ class WebimMessageListener :NSObject, FlutterStreamHandler, MessageListener{
     }
     
     public func removed(message: Message) {
-        print(message)
+        _eventSink?(["removed": message.toJson()])
     }
     
     public func removedAllMessages() {
-        print("removedAllMessages")
+        _eventSink?(["removedAll": nil])
     }
     
     public func changed(message oldVersion: Message, to newVersion: Message) {
