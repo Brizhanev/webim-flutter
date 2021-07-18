@@ -23,7 +23,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
     private lateinit var channel: MethodChannel
 
-    private lateinit var session: WebimSession
+    private var session: WebimSession? = null
     private val messageDelegate = MessageTrackerDelegate()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -39,15 +39,18 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "getPlatformVersion" -> getPlatformVersion(call, result)
-            "buildSession" -> buildSession(call, result)
+            "buildSession" -> {
+                buildSession(call, result)
+            }
             "pauseSession" -> pauseSession()
             "resumeSession" -> resumeSession()
-            "disposeSession" -> resumeSession()
+            "disposeSession" -> disposeSession()
             "sendMessage" -> sendMessage(call, result)
             "getLastMessages" -> getLastMessages(call, result)
             else -> result.notImplemented()
         }
     }
+
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
@@ -76,6 +79,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         session = webimSession
 
         resumeSession()
+        result.success(session)
     }
 
     private fun pauseSession() {
@@ -84,7 +88,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun resumeSession() {
         session?.resume()
-        session.stream.newMessageTracker(messageDelegate)
+        session?.stream?.newMessageTracker(messageDelegate)
     }
 
     private fun disposeSession() {
@@ -94,7 +98,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     private fun sendMessage(@NonNull call: MethodCall, @NonNull result: Result) {
         val message = call.argument<String?>("MESSAGE") as String
 
-        val messageId = session.stream.sendMessage(message)
+        val messageId = session?.stream?.sendMessage(message)
 
         result.success(messageId.toString())
     }
@@ -103,8 +107,8 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         val limit = call.argument<String?>("LIMIT") as Int
 
         if (session == null) return
-        val tracker = session.stream.newMessageTracker(messageDelegate)
-        tracker.getLastMessages(
+        val tracker = session?.stream?.newMessageTracker(messageDelegate)
+        tracker?.getLastMessages(
             limit
         ) { it: MutableList<out Message> -> result.success(it.toJson()) }
     }

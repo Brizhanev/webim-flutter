@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:webim/src/message.dart';
+import 'package:webim/src/message_event.dart';
 import 'package:webim/src/message_event_response.dart';
 import 'package:webim/src/message_response.dart';
 
 export 'package:webim/src/message.dart';
+export 'package:webim/src/message_event.dart';
 
 const _methodChannelName = 'webim';
 const _methodEventStreamName = 'webim.stream';
@@ -122,35 +124,3 @@ class MessageEventListenableDelegate implements ValueListenable {
   }
 }
 
-abstract class MessageEvent {
-  factory MessageEvent.removedAll() => MessageEventRemovedAll();
-  factory MessageEvent.removed(Message message) => MessageEventRemoved(message);
-  factory MessageEvent.added(Message message) => MessageEventAdded(message);
-  factory MessageEvent.changed({
-    @required Message from,
-    @required Message to,
-  }) =>
-      MessageEventChanged(from, to);
-}
-
-@immutable
-class MessageEventAdded implements MessageEvent {
-  const MessageEventAdded(this.message);
-  final Message message;
-}
-
-@immutable
-class MessageEventChanged implements MessageEvent {
-  const MessageEventChanged(this.from, this.to);
-  final Message from;
-  final Message to;
-}
-
-@immutable
-class MessageEventRemoved implements MessageEvent {
-  const MessageEventRemoved(this.message);
-  final Message message;
-}
-
-@immutable
-class MessageEventRemovedAll implements MessageEvent {}
