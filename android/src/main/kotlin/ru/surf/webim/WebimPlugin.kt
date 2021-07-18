@@ -60,7 +60,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
     private fun buildSession(@NonNull call: MethodCall, @NonNull result: Result) {
         val location = call.argument<String?>("LOCATION_NAME") as String
         val accountName = call.argument<String?>("ACCOUNT_NAME") as String
-        val visitorFields = call.argument<String?>("VISITOR") as String
+        val visitorFields = call.argument<String?>("VISITOR")
 
         val webimSession = Webim.newSessionBuilder()
             .setContext(context)
