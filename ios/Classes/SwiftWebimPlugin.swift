@@ -143,7 +143,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         Webim.newSessionBuilder()
             .set(accountName: accountName)
             .set(location: locationName)
-            .set(visitorFieldsJSONString: visitorFields ?? "")
+//            .set(visitorFieldsJSONString: visitorFields)
             .set(webimLogger: self, verbosityLevel: .verbose)
             .build(
                 onSuccess: { webimSession in
@@ -235,7 +235,7 @@ extension Message{
     
     func toJson() -> [String : Any]{
         
-        let timeMicroseconds = (getTime().timeIntervalSince1970 * 1000).rounded()
+        let timeMicroseconds = (getTime().timeIntervalSince1970 * 1000000).rounded()
         
         let map =  [
             "clientSideId": ["id": getID()],
@@ -244,7 +244,7 @@ extension Message{
             "operatorId": getOperatorID() ?? "",
             "senderAvatarUrl":getSenderAvatarFullURL()?.absoluteString ?? "",
             "senderName":getSenderName(),
-            "senderStatus":(getSendStatus() == MessageSendStatus.sent) ?"SENT"  : "SENDING",
+            "senderStatus":(getSendStatus() == MessageSendStatus.sent) ? "SENT" : "SENDING",
             "timeMicros": Int64(timeMicroseconds),
             "isReadOperator":isReadByOperator(),
             "canBeEdited": canBeEdited(),
