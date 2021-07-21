@@ -72,6 +72,13 @@ class Webim {
     return ListMessageResponse.fromJson(response).transform();
   }
 
+  static Future<List<Message>> getNextMessages({
+    @required int limit,
+  }) async {
+    final response = await _channel.invokeMethod('getNextMessages', {'LIMIT': limit});
+    return ListMessageResponse.fromJson(response).transform();
+  }
+
   static void _setMessageStreamListener() {
     messageStreamSubscription =
         EventChannel(_methodEventStreamName).receiveBroadcastStream().listen(

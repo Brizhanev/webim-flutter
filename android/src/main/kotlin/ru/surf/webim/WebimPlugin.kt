@@ -5,10 +5,8 @@ import android.util.Log
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.webimapp.android.sdk.*
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -25,6 +23,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
 
     private var session: WebimSession? = null
     private val messageDelegate = MessageTrackerDelegate()
+    private var tracker: MessageTracker? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, methodChannelName)
@@ -47,6 +46,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
             "disposeSession" -> disposeSession()
             "sendMessage" -> sendMessage(call, result)
             "getLastMessages" -> getLastMessages(call, result)
+            "getNextMessages" -> getNextMessages(call, result)
             else -> result.notImplemented()
         }
     }
@@ -65,16 +65,16 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         val accountName = call.argument<String?>("ACCOUNT_NAME") as String
         val visitorFields = call.argument<String?>("VISITOR")
 
-        val webimSession = Webim.newSessionBuilder()
+        val sessionBuilder = Webim.newSessionBuilder()
             .setContext(context)
             .setAccountName(accountName)
             .setLocation(location)
-//            .setVisitorFieldsJson(visitorFields)
             .setLogger(if (BuildConfig.DEBUG)
                 WebimLog { log: String -> Log.d("WEBIM", log) } else null,
                 Webim.SessionBuilder.WebimLogVerbosityLevel.VERBOSE
             )
-            .build()
+        if (visitorFields != null) sessionBuilder.setVisitorFieldsJson(visitorFields)
+        val webimSession = sessionBuilder.build()
 
         session = webimSession
 
@@ -107,8 +107,17 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         val limit = call.argument<String?>("LIMIT") as Int
 
         if (session == null) return
-        val tracker = session?.stream?.newMessageTracker(messageDelegate)
+        tracker = session?.stream?.newMessageTracker(messageDelegate)
         tracker?.getLastMessages(
+            limit
+        ) { it: MutableList<out Message> -> result.success(it.toJson()) }
+    }
+
+    private fun getNextMessages(@NonNull call: MethodCall, @NonNull result: Result) {
+        val limit = call.argument<String?>("LIMIT") as Int
+
+        if (session == null) return
+        tracker?.getNextMessages(
             limit
         ) { it: MutableList<out Message> -> result.success(it.toJson()) }
     }

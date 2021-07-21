@@ -7,7 +7,8 @@ let eventStreamChannelName = "webim.stream"
 
 public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
     
-    static var  session: WebimSession?
+    static var session: WebimSession?
+    static var tracker: MessageTracker?
     static let messageStreamHandler = WebimMessageListener()
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -35,6 +36,8 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
             sendMessage (call, result: result)
         case "getLastMessages":
             getLastMessages (call, result: result)
+        case "getNextMessages":
+            getNextMessages (call, result: result)
         default:
             print("not implemented")
         }
@@ -103,10 +106,20 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         let args = call.arguments as! [String: Any]
         let limit = args["LIMIT"] as! Int
         
-        let tracker = try? SwiftWebimPlugin.session?.getStream().newMessageTracker(messageListener: WebimMessageListener())
+        SwiftWebimPlugin.tracker = try? SwiftWebimPlugin.session?.getStream().newMessageTracker(messageListener: WebimMessageListener())
         
-        try? tracker?.getLastMessages(byLimit: limit, completion: {(messages: [Message]) -> Void in self.complete(messages, result)})
+        try? SwiftWebimPlugin.tracker?.getLastMessages(byLimit: limit, completion: {(messages: [Message]) -> Void in self.complete(messages, result)})
     }
+    
+    
+    
+    private func getNextMessages(_ call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! [String: Any]
+        let limit = args["LIMIT"] as! Int
+        
+        try? SwiftWebimPlugin.tracker?.getLastMessages(byLimit: limit, completion: {(messages: [Message]) -> Void in self.complete(messages, result)})
+    }
+    
     
     private func complete(_ messages: [Message],_  result: @escaping FlutterResult) -> Void {
         
@@ -121,6 +134,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
                     details: nil))
         }
     }
+    
     
     private func sendMessage(_ call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! [String: Any]
@@ -140,51 +154,53 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         let locationName = args["LOCATION_NAME"] as! String
         let visitorFields = args["VISITOR"] as? String
         
-        Webim.newSessionBuilder()
+        let sessionBuilder = Webim.newSessionBuilder()
             .set(accountName: accountName)
             .set(location: locationName)
-//            .set(visitorFieldsJSONString: visitorFields)
             .set(webimLogger: self, verbosityLevel: .verbose)
-            .build(
-                onSuccess: { webimSession in
-                    SwiftWebimPlugin.session = webimSession
-                    self.resumeSession(result: result)
-                }, onError: {
-                    error in
-                    switch error{
-                    case .nilAccountName:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim session object creating failed because of passing nil account name.",
-                                            details: nil))
-                        
-                        
-                    case .nilLocation:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim session object creating failed because of passing nil location name.",
-                                            details: nil))
-                        
-                    case .invalidRemoteNotificationConfiguration:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim session object creating failed because of invalid remote notifications configuration.",
-                                            details: nil))
-                        
-                    case .invalidAuthentificatorParameters:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim session object creating failed because of invalid visitor authentication system configuration.",
-                                            details: nil))
-                        
-                    case .invalidHex:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim can't parsed prechat fields",
-                                            details: nil))
-                        
-                    case .unknown:
-                        result(FlutterError(code: FlutterPluginEnum.failure,
-                                            message: "Webim session object creating failed with unknown error",
-                                            details: nil))
-                    }
+        
+        if(visitorFields != nil) {sessionBuilder.set(visitorFieldsJSONString: visitorFields!)}
+        
+        sessionBuilder.build(
+            onSuccess: { webimSession in
+                SwiftWebimPlugin.session = webimSession
+                self.resumeSession(result: result)
+            }, onError: {
+                error in
+                switch error{
+                case .nilAccountName:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim session object creating failed because of passing nil account name.",
+                                        details: nil))
+                    
+                    
+                case .nilLocation:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim session object creating failed because of passing nil location name.",
+                                        details: nil))
+                    
+                case .invalidRemoteNotificationConfiguration:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim session object creating failed because of invalid remote notifications configuration.",
+                                        details: nil))
+                    
+                case .invalidAuthentificatorParameters:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim session object creating failed because of invalid visitor authentication system configuration.",
+                                        details: nil))
+                    
+                case .invalidHex:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim can't parsed prechat fields",
+                                        details: nil))
+                    
+                case .unknown:
+                    result(FlutterError(code: FlutterPluginEnum.failure,
+                                        message: "Webim session object creating failed with unknown error",
+                                        details: nil))
                 }
-            )
+            }
+        )
         
     }
     
