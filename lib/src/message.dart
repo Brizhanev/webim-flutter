@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 /// some of the message fields there will be created a new object. That is why messages can be compared by using ({@code equals}) for searching messages
 /// with the same set of fields or by id ({@code msg1.getId().equals(msg2.getId())}) for searching logically identical messages. Id is formed
 /// on the client side when sending a message ({@link MessageStream#sendMessage} or {@link MessageStream#sendFile}).
-class Message implements Comparable {
+class Message implements Comparable<Message> {
   /// return unique client id of the message. Notice that id does not change while changing the content of a message.
   final String clientSideId;
 
@@ -90,12 +90,7 @@ class Message implements Comparable {
   int get hashCode => super.hashCode;
 
   @override
-  int compareTo(other) {
-    if (other is Message) {
-      time.compareTo(other.time);
-    }
-    throw FormatException('Object isn\'t Message');
-  }
+  int compareTo(other) => time.compareTo(other.time);
 }
 
 /// Type of [Message]
