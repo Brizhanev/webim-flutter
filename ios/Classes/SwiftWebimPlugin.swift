@@ -117,7 +117,7 @@ public class SwiftWebimPlugin: NSObject, FlutterPlugin, WebimLogger {
         let args = call.arguments as! [String: Any]
         let limit = args["LIMIT"] as! Int
         
-        try? SwiftWebimPlugin.tracker?.getLastMessages(byLimit: limit, completion: {(messages: [Message]) -> Void in self.complete(messages, result)})
+        try? SwiftWebimPlugin.tracker?.getNextMessages(byLimit: limit, completion: {(messages: [Message]) -> Void in self.complete(messages, result)})
     }
     
     
