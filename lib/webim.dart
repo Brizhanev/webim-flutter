@@ -34,6 +34,7 @@ class Webim {
     @required String locationName,
     String visitorFields,
   }) async {
+    _setMessageStreamListener();
     final session = await _channel.invokeMethod(
       'buildSession',
       {
@@ -42,8 +43,7 @@ class Webim {
         'VISITOR': visitorFields,
       },
     );
-    await Future<void>.delayed(Duration(seconds: 2));
-    _setMessageStreamListener();
+
     return session.toString();
   }
 
