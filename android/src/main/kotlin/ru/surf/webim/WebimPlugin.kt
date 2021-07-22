@@ -73,7 +73,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
                 WebimLog { log: String -> Log.d("WEBIM", log) } else null,
                 Webim.SessionBuilder.WebimLogVerbosityLevel.VERBOSE
             )
-        if (visitorFields != null) sessionBuilder.setVisitorFieldsJson(visitorFields)
+        if (visitorFields != null && visitorFields.isNotEmpty()) sessionBuilder.setVisitorFieldsJson(visitorFields)
         val webimSession = sessionBuilder.build()
 
         session = webimSession
