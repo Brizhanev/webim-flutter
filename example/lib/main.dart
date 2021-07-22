@@ -82,14 +82,14 @@ class _MyAppState extends State<MyApp> {
 
   void _buildSession() async {
     final session = await Webim.buildSession(
-            // accountName: "https://testchat.smpbank.ru",
-            // locationName: 'mobile',
-            accountName: "demo",
-            locationName: 'mobile',
-            visitorFields:
-                "{\"fields\":{\"id\":\"102480\",\"display_name\":\"Артамонов Александр Викторович\",\"email\":\"artosmp2@yandex.ru\"},\"hash\":\"1a0bc6835639fae8b88c3cd92757fd5317b2630c56cb81a1dff67c5e13acebd8\"}")
-        .catchError(
-            (e) => _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(e.toString()))));
+      // accountName: "https://testchat.smpbank.ru",
+      // locationName: 'mobile',
+      accountName: "demo",
+      locationName: 'mobile',
+      // visitorFields:
+      //     "{\"fields\":{\"id\":\"102480\",\"display_name\":\"Артамонов Александр Викторович\",\"email\":\"artosmp2@yandex.ru\"},\"hash\":\"1a0bc6835639fae8b88c3cd92757fd5317b2630c56cb81a1dff67c5e13acebd8\"}"
+    ).catchError(
+        (e) => _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(e.toString()))));
     print(session);
   }
 
