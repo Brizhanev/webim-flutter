@@ -73,7 +73,9 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
                 WebimLog { log: String -> Log.d("WEBIM", log) } else null,
                 Webim.SessionBuilder.WebimLogVerbosityLevel.VERBOSE
             )
-        if (visitorFields != null && visitorFields.isNotEmpty()) sessionBuilder.setVisitorFieldsJson(visitorFields)
+        if (visitorFields != null && visitorFields.isNotEmpty()) sessionBuilder.setVisitorFieldsJson(
+            visitorFields
+        )
         val webimSession = sessionBuilder.build()
 
         session = webimSession
@@ -88,7 +90,7 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun resumeSession() {
         session?.resume()
-        session?.stream?.newMessageTracker(messageDelegate)
+        tracker = session?.stream?.newMessageTracker(messageDelegate)
     }
 
     private fun disposeSession() {
@@ -107,7 +109,6 @@ class WebimPlugin : FlutterPlugin, MethodCallHandler {
         val limit = call.argument<String?>("LIMIT") as Int
 
         if (session == null) return
-        tracker = session?.stream?.newMessageTracker(messageDelegate)
         tracker?.getLastMessages(
             limit
         ) { it: MutableList<out Message> -> result.success(it.toJson()) }
